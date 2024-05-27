@@ -1,0 +1,33 @@
+<html>
+	<head>
+		
+		<title>Curso Spring Tool</title>
+		<script
+  src="https://code.jquery.com/jquery-3.7.1.js"
+  integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+  crossorigin="anonymous"></script>
+
+	</head>
+	<body>
+
+<script>
+	$(document).ready (
+
+			function () {
+
+				$.ajax({
+					url : "http://localhost:8080/usuario/",
+					method:"GET"
+				}).then(function (data, status, info) {
+         alert(data[1].senha);
+				} );
+
+			}
+		);
+	
+</script>
+
+	  
+	</body>
+	
+</html>
