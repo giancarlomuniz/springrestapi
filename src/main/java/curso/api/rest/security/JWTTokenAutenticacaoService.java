@@ -57,9 +57,14 @@ public class JWTTokenAutenticacaoService {
 		
 		 Usuario usuario = ApplicationContextLoad.getApplicationContext()
 			        .getBean(UsuarioRepository.class).findUserByLogin(username);
+		 
+		 System.out.println(usuario.getId());
 		
 		/*Escreve token como responsta no corpo http*/
-		response.getWriter().write("{\"Authorization\": \""+token+"\",\"username\":\""+username+"\"}");
+		response.getWriter().write("{\"Authorization\": \""
+		                        +token+"\",\"username\":\""
+				                +username+"\",\"professor\":\""
+				                +usuario.getId()+ "\"}");
 		
 	}
 	

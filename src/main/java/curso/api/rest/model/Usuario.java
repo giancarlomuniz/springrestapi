@@ -12,6 +12,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ConstraintMode;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
@@ -33,8 +35,11 @@ import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import curso.api.rest.model.DTO.CategoriaDTO;
 
 
 
@@ -45,7 +50,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class Usuario implements UserDetails{
 
 	
-
+	@JsonCreator
 	public Usuario() {
 		// TODO Auto-generated constructor stub
 	}
@@ -63,6 +68,7 @@ public class Usuario implements UserDetails{
 	
 	private String nome;
 	
+	private String sexo;
 	private BigDecimal salario;
 	
 
@@ -93,8 +99,7 @@ public class Usuario implements UserDetails{
 	table = "role",unique = false, foreignKey = @ForeignKey(name="role_fk",value = ConstraintMode.CONSTRAINT)))
     private List<Role> roles = new ArrayList<Role>();
 	
-	@ManyToOne
-	private Categoria categoria;
+
 	
 	
 	private String token = "";
@@ -106,6 +111,7 @@ public class Usuario implements UserDetails{
 	 private String localidade;
 	 private String uf;
 	 
+
 	 
 	   @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
 	    private List<Professor> professores;
@@ -113,17 +119,29 @@ public class Usuario implements UserDetails{
 	   @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
 	    private List<Aluno> Alunos;
 	 
+	   @ManyToOne(targetEntity = Professor.class)
+		@JoinColumn(name = "professor_id", nullable = true, 
+		foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "professor_id_fk"))
+		private Professor professor;
+	   
+	      private String cargo;
 	 
 	
-	public Categoria getCategoria() {
-		return categoria;
+	
+	  
+	
+
+
+
+
+
+	public String getCargo() {
+		return cargo;
 	}
 
-
-	public void setCategoria(Categoria categoria) {
-		this.categoria = categoria;
+	public void setCargo(String cargo) {
+		this.cargo = cargo;
 	}
-
 
 	public Date getDataNascimento() {
 		return dataNascimento;
@@ -255,6 +273,13 @@ public class Usuario implements UserDetails{
 		return this.nome = nome;
 	}
 	
+	public String getSexo() {
+		return sexo;
+	}
+	public void setSexo(String sexo) {
+		this.sexo = sexo;
+	}
+	
 	public List<Telefone> getTelefones() {
 		return telefones;
 	}
@@ -273,6 +298,19 @@ public class Usuario implements UserDetails{
 	
 	
 	
+
+	public Professor getProfessor() {
+		return professor;
+	}
+
+
+	public void setProfessor(Professor professor) {
+		this.professor = professor;
+	}
+
+	
+	
+
 
 	@Override
 	public int hashCode() {

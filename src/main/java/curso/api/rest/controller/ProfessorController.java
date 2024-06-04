@@ -52,11 +52,11 @@ public class ProfessorController  {
 	//Consulta por id usuario usando api restfull
 
 		
-		@GetMapping(value = "/{codigo}", produces = "application/json")
+		@GetMapping(value = "/{id}", produces = "application/json")
 		@Cacheable("cacheprof")
-		public ResponseEntity<Professor> initV1(@PathVariable(value = "codigo") Long codigo) {
+		public ResponseEntity<Professor> initV1(@PathVariable(value = "id") Long id) {
 			
-	Optional<Professor> professor =	professorRepository.findById(codigo);
+	Optional<Professor> professor =	professorRepository.findById(id);
 		
 			return new ResponseEntity<Professor>( professor.get(), HttpStatus.OK);
 		}

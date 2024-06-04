@@ -54,7 +54,7 @@ public class CursospringrestapiApplication implements WebMvcConfigurer {
 			.allowedOrigins("*");
 		
 			/*Liberando o mapeamento de Categoria para todas as origens*/
-			registry.addMapping("/categoria/**")
+			registry.addMapping("**/salvarCategoria")
 			.allowedMethods("*")
 			.allowedOrigins("*");
 			

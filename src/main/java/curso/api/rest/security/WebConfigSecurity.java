@@ -43,9 +43,9 @@ public class WebConfigSecurity extends WebSecurityConfigurerAdapter implements W
 		.antMatchers("/index", "/recuperarSenha").permitAll()
 		
 		//.antMatchers(HttpMethod.OPTIONS, "/topicos").permitAll()
-		.antMatchers(HttpMethod.GET, "/**","/usuario/recuperarSenha", "/usuario/**", "/possuiAcesso/**").permitAll()
-		.antMatchers(HttpMethod.POST,"/usuario/**", "/usuario/recuperarSenha", "/possuiAcesso/**").permitAll()
-		.antMatchers(HttpMethod.PUT, "/usuario/**").permitAll()
+		.antMatchers(HttpMethod.GET, "/**","/usuario/recuperarSenha", "/usuario/**", "/possuiAcesso/**", "**/salvarCategoria").permitAll()
+		.antMatchers(HttpMethod.POST,"/usuario/**", "/usuario/recuperarSenha", "/possuiAcesso/**", "**/salvarCategoria").permitAll()
+		.antMatchers(HttpMethod.PUT, "/usuario/**", "**/salvarCategoria").permitAll()
 		.antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
         .anyRequest().authenticated() 
         //.and().formLogin() 
@@ -81,9 +81,9 @@ public class WebConfigSecurity extends WebSecurityConfigurerAdapter implements W
 	@Override
 	public void configure(WebSecurity web) throws Exception {
     web.ignoring()
-   .antMatchers(HttpMethod.GET,"/usuario/recuperarSenha", "/usuario/**",  "/possuiAcesso/**")
+   .antMatchers(HttpMethod.GET,"/usuario/recuperarSenha", "/usuario/**",  "**/salvarCategoria", "/possuiAcesso/**")
    
-    .antMatchers(HttpMethod.POST,"/usuario/recuperarSenha",  "/possuiAcesso/**");
+    .antMatchers(HttpMethod.POST,"/usuario/recuperarSenha",  "/categoria/**", "**/salvarCategoria", "/possuiAcesso/**");
 	}
 
 	@Override

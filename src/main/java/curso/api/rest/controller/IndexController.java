@@ -144,7 +144,7 @@ public class IndexController {
 	@PostMapping(value = "/", produces = "application/json")
 	public ResponseEntity<Usuario> cadastrar(@RequestBody Usuario usuario) throws Exception {
 
-		System.out.println(usuario);
+		System.out.println(usuario.getCargo());
 		for (int pos = 0; pos < usuario.getTelefones().size(); pos++) {
 
 			usuario.getTelefones().get(pos).setUsuario(usuario);
@@ -247,8 +247,6 @@ if(userAux != null) {
 	usuario.setBairro(userAux.getBairro());
 	usuario.setLocalidade(userAux.getLocalidade());
 	usuario.setUf(userAux.getUf());
-
-	System.out.println(usuario);
 	/* Consumindo API externo Via Cep */
 	return usuario;
 		

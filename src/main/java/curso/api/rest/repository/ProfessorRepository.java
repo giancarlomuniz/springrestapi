@@ -23,10 +23,10 @@ public interface ProfessorRepository extends JpaRepository<Professor, Long> {
 	@Query("select u from Usuario u where u.nome like %?1%")
 	List<Usuario> findUserByNome(String nome);
 
-	@Query("select p from Professor p where p.codigo= ?1")
-	Professor findUserByCodigo(Long codigo);
+	@Query("select p from Professor p where p.id= ?1")
+	Professor findUserByCodigo(Long id);
 
-	@Query(nativeQuery = true, value = "select  * from Professor where codigo_prof = ?1")
+	@Query(nativeQuery = true, value = "select  * from Professor where id_prof = ?1")
 	List<Professor> findProfByCodigo(Long id);
 
 	@Query(nativeQuery = true, value = "select * from Professor  join Usuario  on usuario_id = id  where nome like %?1%")
