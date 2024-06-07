@@ -46,6 +46,8 @@ public class CategoriaController {
 	public ResponseEntity<String> deleteAcesso(@RequestBody Categoria categoria) throws ExecptionSpring { /*Recebe o JSON e converte pra Objeto*/
 		
 		if (categoriaRepository.findById(categoria.getId()).isPresent() == false) {
+			
+			
 			throw new ExecptionSpring("Categoria já foi removida");
 		}
 		
@@ -70,15 +72,12 @@ public class CategoriaController {
 		Categoria categoriaSalva = categoriaRepository.save(categoria);
 		
 		
-		return new ResponseEntity<>(categoriaSalva, HttpStatus.OK);
+		return new ResponseEntity<Categoria>(categoriaSalva, HttpStatus.OK);
 	}
 
 
 
 
 
-	private Long Long(String usuario) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 }

@@ -1,12 +1,12 @@
 package curso.api.rest.controller;
 
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +39,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonStreamParser;
 
 import curso.api.rest.model.UserChart;
 import curso.api.rest.model.UserReport;
@@ -48,10 +47,9 @@ import curso.api.rest.model.DTO.ObjetoMsgGeral;
 import curso.api.rest.repository.TelefoneRepository;
 import curso.api.rest.repository.UsuarioRepository;
 import curso.api.rest.service.ImplementacaoUserDatailsService;
-import curso.api.rest.service.UsuarioService;
 import curso.api.rest.service.ServiceEnviarEmail;
 import curso.api.rest.service.ServiceRelatorio;
-import curso.rest.api.ObjetoErro;
+import curso.api.rest.service.UsuarioService;
 
 @CrossOrigin
 @RestController
@@ -87,9 +85,22 @@ public class IndexController {
 		return new ResponseEntity<Usuario>((usuario.get()), HttpStatus.OK);
 	}
 
+	@GetMapping(value = "/listaUse", produces = "application/json")
+	public ResponseEntity<List<Usuario>> listaUsuario() throws InterruptedException {
+
+				List<Usuario> list = usuarioRepository.findAll();
+
+
+		// Thread.sleep(6000);//Interromper o sistema em 6 segundo
+
+		
+		return new ResponseEntity<List<Usuario>>( list, HttpStatus.OK);
+	}
+	
+	
 	@CacheEvict(value = "cacheusuarios", allEntries = true) // Exclui todos cache não mais utilizados
 	@CachePut(value = "cacheusuarios") // atualiza caches modificados
-	@GetMapping(value = "/", produces = "application/json")
+	@GetMapping(value = "/listaUser", produces = "application/json")
 	public ResponseEntity<Page<Usuario>> usuario() throws InterruptedException {
 
 		PageRequest pageRequest = PageRequest.of(0, 5, Sort.by("nome"));
