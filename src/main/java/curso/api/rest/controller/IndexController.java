@@ -40,9 +40,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
 
+import curso.api.rest.execption.ExecptionSpring;
+import curso.api.rest.model.Categoria;
 import curso.api.rest.model.UserChart;
 import curso.api.rest.model.UserReport;
 import curso.api.rest.model.Usuario;
+import curso.api.rest.model.UsuarioDTO;
 import curso.api.rest.model.DTO.ObjetoMsgGeral;
 import curso.api.rest.repository.TelefoneRepository;
 import curso.api.rest.repository.UsuarioRepository;
@@ -58,6 +61,7 @@ public class IndexController {
 
 	@Autowired
 	private UsuarioRepository usuarioRepository;
+
 	@Autowired
 	private TelefoneRepository telefoneRepository;
 	@Autowired
@@ -77,10 +81,12 @@ public class IndexController {
 
 	@CacheEvict(value = "cacheusuarioId", allEntries = true)
 	@CachePut(value = "cacheusuarioId")
-	@GetMapping(value = "/{id}", produces = "application/json")
+	@GetMapping(value = "/buscaId/{id}", produces = "application/json")
 	public ResponseEntity<Usuario> initV1(@PathVariable(value = "id") Long id) {
 
 		Optional<Usuario> usuario = usuarioRepository.findById(id);
+		
+	
 
 		return new ResponseEntity<Usuario>((usuario.get()), HttpStatus.OK);
 	}
@@ -89,30 +95,31 @@ public class IndexController {
 	public ResponseEntity<List<Usuario>> listaUsuario() throws InterruptedException {
 
 				List<Usuario> list = usuarioRepository.findAll();
-
+            
 
 		// Thread.sleep(6000);//Interromper o sistema em 6 segundo
 
-		
-		return new ResponseEntity<List<Usuario>>( list, HttpStatus.OK);
+		return new ResponseEntity<List<Usuario>>(list,HttpStatus.OK);
 	}
 	
 	
-	@CacheEvict(value = "cacheusuarios", allEntries = true) // Exclui todos cache não mais utilizados
-	@CachePut(value = "cacheusuarios") // atualiza caches modificados
-	@GetMapping(value = "/listaUser", produces = "application/json")
-	public ResponseEntity<Page<Usuario>> usuario() throws InterruptedException {
-
-		PageRequest pageRequest = PageRequest.of(0, 5, Sort.by("nome"));
-
-		Page<Usuario> list = usuarioRepository.findAll(pageRequest);
+	
 
 	
-		// Thread.sleep(6000);//Interromper o sistema em 6 segundo
+	
+	
+	
+	//QUANTIDADES PAGINA
+	@GetMapping(value = "/qtdPagina", produces = "application/json")
+	public ResponseEntity<Integer> qtdPagina( ) {
 
-		return new ResponseEntity<Page<Usuario>>(list, HttpStatus.OK);
+		Integer qtdpagina = usuarioRepository.qtdpagina();
+
+		return new ResponseEntity<Integer>(qtdpagina, HttpStatus.OK);
 	}
-
+	
+	
+	
 	@CacheEvict(value = "cacheusuarios", allEntries = true) // Exclui todos cache não mais utilizados
 	@CachePut(value = "cacheusuarios") // atualiza caches modificados
 	@GetMapping(value = "/page/{pagina}", produces = "application/json")
@@ -131,21 +138,32 @@ public class IndexController {
 	@CacheEvict(value = "cacheusuarios", allEntries = true) // Exclui todos cache não mais utilizados
 	@CachePut(value = "cacheusuarios") // atualiza caches modificados
 	@GetMapping(value = "/consultanome/{nome}", produces = "application/json")
-	public ResponseEntity<Page<Usuario>> consultaNome(@PathVariable("nome") String nome, Pageable pageable)
+	public ResponseEntity<List<Usuario>> consultaNome(@PathVariable("nome") String nome)
 			throws InterruptedException {
 
-		PageRequest pageRequest = null;
-		Page<Usuario> list = null;
-		if (nome == null || (nome != null && nome.trim().isEmpty()) || nome.equalsIgnoreCase("undefined")) {
-			PageRequest page = PageRequest.of(0, 5, Sort.by("nome"));
-			list = usuarioRepository.findAll(page);
-		} else {
+	
 
-			list = usuarioRepository.findUserByNamePage(nome, pageable);
-		}
+			List<Usuario> list = usuarioRepository.findUserByNome(nome);
+		
 
-		return new ResponseEntity<Page<Usuario>>(list, HttpStatus.OK);
+		return new ResponseEntity<List<Usuario>>(list, HttpStatus.OK);
 	}
+	
+	/* END-POINT consulta por nome de usaurio */
+	@CacheEvict(value = "cacheusuarios", allEntries = true) // Exclui todos cache não mais utilizados
+	@CachePut(value = "cacheusuarios") // atualiza caches modificados
+	@GetMapping(value = "/consultacpf/{cpf}", produces = "application/json")
+	public ResponseEntity<List<Usuario>> consultaCpf(@PathVariable("cpf") String cpf)
+			throws InterruptedException {
+
+	
+
+			List<Usuario> list = usuarioRepository.findUserByCpf(cpf);
+		
+
+		return new ResponseEntity<List<Usuario>>(list, HttpStatus.OK);
+	}
+	
 	
 	
 	
@@ -211,16 +229,11 @@ public class IndexController {
 		return new ResponseEntity("Usuario :" + idUser + ", e Venda :" + idVenda + " atualizados !", HttpStatus.OK);
 	}
 
+
+	
 	// Metodo para delete usando api restfull
 
-	@DeleteMapping(value = "/{id}", produces = "application/text")
-	public String delete(@PathVariable(value = "id") Long id) {
 
-		usuarioRepository.deleteById(id);
-
-		return "Ok";
-
-	}
 
 	// End Point Deletando Telefone de usuario
 	@DeleteMapping(value = "deleteTelefone/{id}", produces = "application/text")
@@ -232,9 +245,21 @@ public class IndexController {
 
 	}
 
+	@ResponseBody /*Poder dar um retorno da API*/
+	@PostMapping(value = "/deleteUsuario") /*Mapeando a url para receber JSON*/
+	public ResponseEntity<String> deleteUsuario(@RequestBody Usuario usuasrio) { /*Recebe o JSON e converte pra Objeto*/
+		
+		;
+		usuarioRepository.deleteById(usuasrio.getId());
+		
+		return new ResponseEntity<String>(new Gson().toJson("Usuario Removido"),HttpStatus.OK);
+	}
+/*
+ * CONSUMO VIA CEP, DESATIVADA POR USAR NO FRONT ANGULAR VIACEP DIRETO URL
+ * 
 	@GetMapping("/cep/{cep}")
 	public Object cosumirCep(@PathVariable String cep) throws Exception {
-		/* Consumindo API externo Via Cep */
+		/* Consumindo API externo Via Cep 
 
 		URL url = new URL("https://viacep.com.br/ws/" + cep + "/json/");
 		URLConnection connection = url.openConnection();
@@ -258,7 +283,7 @@ if(userAux != null) {
 	usuario.setBairro(userAux.getBairro());
 	usuario.setLocalidade(userAux.getLocalidade());
 	usuario.setUf(userAux.getUf());
-	/* Consumindo API externo Via Cep */
+	/* Consumindo API externo Via Cep 
 	return usuario;
 		
 }else {
@@ -266,7 +291,7 @@ if(userAux != null) {
 }
 		
 	}
-	
+*/
 
 	@CacheEvict(value = "cacherelatorio", allEntries = true) // Exclui todos cache não mais utilizados
 	@CachePut(value = "cacherelatorio") // atualiza caches modificados

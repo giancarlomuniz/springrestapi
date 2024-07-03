@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import curso.api.rest.model.Categoria;
 import curso.api.rest.model.Professor;
 import curso.api.rest.model.Usuario;
 import curso.api.rest.repository.ProfessorRepository;
@@ -103,61 +104,48 @@ public class ProfessorController  {
 	
 
 	//Salvando usuario usando microserviço restfull @PostMapping
-	@PostMapping( value = "/", produces = "application/json")
-		public ResponseEntity<Professor> cadastrar(@RequestBody Professor professor) throws Exception{
+	@PostMapping( value = "/salvar", produces = "application/json")
+		public ResponseEntity<Professor> cadastrar(@RequestBody Professor profes) throws Exception{
 	     
-	if (professor.getUsuario() == null || professor.getUsuario().getLogin() == null) {
+	if (profes.getId_usuario() == null) {
 		throw  new  Exception("Os dados do Usuarios estão incorretos");
 	}
+		 
+		Professor salvarProf = professorRepository.save(profes);
 		
-		Usuario usuario =usuarioRepository.save(professor.getUsuario());
-		 String senhaCriptogrfado = new BCryptPasswordEncoder().encode(usuario.getSenha());
-			
-			usuario.setSenha(senhaCriptogrfado);
-		
-	     professor.setUsuario(usuario);
-	   
-		
-		Professor salvarProf = professorRepository.save(professor);
-		
-		return new ResponseEntity<Professor>(salvarProf, HttpStatus.OK);
+		return new ResponseEntity<>(salvarProf, HttpStatus.OK);
 		}
+	
+
+	
+	
+	//QUANTIDADES PAGINA
+		@GetMapping(value = "/qtdPagina", produces = "application/json")
+		public ResponseEntity<Integer> qtdPagina( ) {
+
+			Integer qtdpagina = usuarioRepository.qtdpagina();
+
+			return new ResponseEntity<Integer>(qtdpagina, HttpStatus.OK);
+		}
+	
 	@CacheEvict(value = "cacheprofessor", allEntries = true) // Exclui todos cache não mais utilizados
 	@CachePut(value = "cacheprofessor") // atualiza caches modificados
 	@GetMapping(value = "/page/{pagina}", produces = "application/json")
-	public ResponseEntity<Page<Professor>> professorPagina(@PathVariable("pagina") int pagina) throws InterruptedException {
+	public ResponseEntity<Page<Usuario>> professorPagina(@PathVariable("pagina") int pagina) throws InterruptedException {
 
 		PageRequest page = PageRequest.of(pagina, 5, Sort.by("nome"));
+		
+		String prof = "Professor";
 
-		Page<Professor> list = professorRepository.findAll(page);
+		Page<Usuario> list = usuarioRepository.findPorPagina(prof, page);
 
 		// Thread.sleep(6000);//Interromper o sistema em 6 segundo
 
-		return new ResponseEntity<Page<Professor>>(list, HttpStatus.OK);
+		return new ResponseEntity<Page<Usuario>>(list, HttpStatus.OK);
 	}
 	
 	
 	
-	//Salvando usuario usando microserviço restfull @PostMapping
-	@PutMapping( value = "/", produces = "application/json")
-		public ResponseEntity<Professor> atualizar(@RequestBody Professor professor) throws Exception{
-	     
-	if (professor.getUsuario() == null || professor.getUsuario().getLogin() == null) {
-		throw  new  Exception("Os dados do Usuarios estão incorretos");
-	}
-		
-		Usuario usuario =usuarioRepository.save(professor.getUsuario());
-		 String senhaCriptogrfado = new BCryptPasswordEncoder().encode(usuario.getSenha());
-			
-			usuario.setSenha(senhaCriptogrfado);
-		
-	     professor.setUsuario(usuario);
-	   
-		
-		Professor salvarProf = professorRepository.save(professor);
-		
-		return new ResponseEntity<Professor>(salvarProf, HttpStatus.OK);
-		}
 	
 	
 

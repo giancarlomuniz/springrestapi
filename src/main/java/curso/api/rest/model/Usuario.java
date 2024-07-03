@@ -36,6 +36,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+import curso.rest.api.CustomGrantedAuthority;
 
 
 
@@ -78,7 +81,7 @@ public class Usuario implements UserDetails{
   private  Date dataNascimento;
 
 	
-	
+
 	@OneToMany(mappedBy="usuario", orphanRemoval = true, cascade = CascadeType.ALL, fetch =FetchType.LAZY)
 	private List<Telefone> telefones = new ArrayList<Telefone>();
 	
@@ -108,18 +111,11 @@ public class Usuario implements UserDetails{
 	 private String uf;
 	 
 
-	 
-	   @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
-	    private List<Professor> professores;
-	   
+	
 	   @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
 	    private List<Aluno> Alunos;
 	 
-	   @ManyToOne(targetEntity = Professor.class)
-		@JoinColumn(name = "professor_id", nullable = true, 
-		foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "professor_id_fk"))
-		private Professor professor;
-	   
+
 	      private String cargo;
 	 
 	
@@ -284,25 +280,9 @@ public class Usuario implements UserDetails{
 		this.telefones = telefones;
 	}
 	
-	public List<Professor> getProfessores() {
-		return professores;
-	}
-	
-	public void setProfessores(List<Professor> professores) {
-		this.professores = professores;
-	}
-	
-	
-	
 
-	public Professor getProfessor() {
-		return professor;
-	}
-
-
-	public void setProfessor(Professor professor) {
-		this.professor = professor;
-	}
+	
+	
 
 	
 	
@@ -325,8 +305,9 @@ public class Usuario implements UserDetails{
 		return Objects.equals(id, other.id);
 	}
 
+	
 	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
+	public List<Role> getAuthorities() {
 		// TODO Auto-generated method stub
 		return roles;
 	}

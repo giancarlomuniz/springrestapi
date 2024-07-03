@@ -17,6 +17,8 @@ import javax.persistence.TemporalType;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 
 
 @Entity
@@ -39,24 +41,30 @@ public class Professor implements Serializable  {
 	private Date dataAdmProf;
 	
 	
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "usuario_id", referencedColumnName = "id")
-	private Usuario usuario = new Usuario();
-   
+	private Long id_usuario;
+
+	@JsonCreator
 public Professor() {
 	// TODO Auto-generated constructor stub
 }
 	
 
-	
-	
-	public Usuario getUsuario() {
-		return usuario;
+
+
+
+	public Long getId_usuario() {
+		return id_usuario;
 	}
 
-	public void setUsuario(Usuario usuario) {
-		this.usuario = usuario;
+
+
+
+
+	public void setId_usuario(Long id_usuario) {
+		this.id_usuario = id_usuario;
 	}
+
+
 
 
 

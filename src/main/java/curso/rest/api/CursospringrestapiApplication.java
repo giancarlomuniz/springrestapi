@@ -57,6 +57,9 @@ public class CursospringrestapiApplication implements WebMvcConfigurer {
 			registry.addMapping("**/salvarCategoria")
 			.allowedMethods("*")
 			.allowedOrigins("*");
+			registry.addMapping("**/salvarAcesso")
+			.allowedMethods("*")
+			.allowedOrigins("*");
 			
 			/*Liberando o mapeamento de Recuperar para todas as origens*/
 			registry.addMapping("usuario/recuperarSenha")
@@ -68,6 +71,7 @@ public class CursospringrestapiApplication implements WebMvcConfigurer {
 			.allowedMethods("*")
 			.allowedOrigins("*")
 			.allowedHeaders("*");
+			
 			
 			
 			 registry.addMapping("/**")

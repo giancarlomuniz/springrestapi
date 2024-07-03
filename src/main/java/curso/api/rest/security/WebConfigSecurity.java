@@ -38,20 +38,23 @@ public class WebConfigSecurity extends WebSecurityConfigurerAdapter implements W
 		/*Ativando a proteção contra usuário que não estão validados por TOKEN*/
 		http.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
 		
+		
 		/*Ativando a permissão para acesso a página incial do sistema EX: sistema.com.br/index*/
-		.disable().authorizeRequests().antMatchers("/").permitAll()
-		.antMatchers("/index", "/recuperarSenha").permitAll()
+		.disable()
+		.authorizeRequests().antMatchers("/").permitAll()
+				.antMatchers("/index", "/recuperarSenha").permitAll()
 		
 		//.antMatchers(HttpMethod.OPTIONS, "/topicos").permitAll()
 		.antMatchers(HttpMethod.GET, "/**","/usuario/recuperarSenha", "/usuario/**", "/possuiAcesso/**", "**/salvarCategoria").permitAll()
-		.antMatchers(HttpMethod.POST,"/usuario/**", "/usuario/recuperarSenha", "/possuiAcesso/**", "**/salvarCategoria").permitAll()
+		.antMatchers(HttpMethod.POST,"/usuario/**", "/usuario/recuperarSenha", 
+				                     "/possuiAcesso/**", "**/salvarCategoria","/salvarAcesso","/usuario/deleteUsuario", "/usuario/professor/**").permitAll()
 		.antMatchers(HttpMethod.PUT, "/usuario/**", "**/salvarCategoria").permitAll()
 		.antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
         .anyRequest().authenticated() 
         //.and().formLogin() 
 		
 		/*URL de Logout - Redireciona após o user deslogar do sistema*/
-		.anyRequest().authenticated().and().logout().logoutSuccessUrl("/index")
+        .anyRequest().authenticated() .and().logout().logoutSuccessUrl("/index")
 		
 		/*Maperia URL de Logout e insvalida o usuário*/
 		.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
@@ -83,14 +86,18 @@ public class WebConfigSecurity extends WebSecurityConfigurerAdapter implements W
     web.ignoring()
    .antMatchers(HttpMethod.GET,"/usuario/recuperarSenha", "/usuario/**",  "**/salvarCategoria", "/possuiAcesso/**")
    
-    .antMatchers(HttpMethod.POST,"/usuario/recuperarSenha",  "/categoria/**", "**/salvarCategoria", "/possuiAcesso/**");
+    .antMatchers(HttpMethod.POST,"/usuario/recuperarSenha", "/usuario/**",
+    		                    "/categoria/**", "**/salvarCategoria","/salvarAcesso", "/possuiAcesso/**", 
+    		                    "/usuario/professor/**");
 	}
 
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
 		 registry.addMapping("/**")
          .allowedOrigins("http://localhost:4200")
-        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "TRACE", "CONNECT");
+        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "TRACE", "CONNECT")
+         .allowedHeaders("*");
+        
 	}
 	
 

@@ -14,6 +14,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import curso.api.rest.model.Categoria;
 import curso.api.rest.model.Usuario;
 
 
@@ -30,6 +31,10 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long>{
 	
 	@Query("select u from Usuario u where u.nome like %?1%")
 	List<Usuario> findUserByNome(String nome);
+	
+	@Query("select u from Usuario u where u.cpf like %?1%")
+	List<Usuario> findUserByCpf(String cpf);
+	
 	
 	 
 	@Query("select u from Usuario u where u.id = ?1")
@@ -55,6 +60,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long>{
 	@Query(value = "update usuario set senha =?1 where  login = ?2", nativeQuery = true)
 	void updateSenhaUser(String senha, String login) ;
 	
+	@Query(value = "SELECT c FROM Usuario c WHERE c.cargo = ?1")
+	public Page<Usuario> findPorPagina(String professor, Pageable pageable);
 
 	
 
@@ -90,6 +97,16 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long>{
 
 	    return findAll(example, pageable);
 	}
+
+
+	@Query(nativeQuery = true, value = "select  cast((count(1)/5)  as integer) +1 as qtdUsuario  from usuario ")
+	public Integer qtdpagina();
+
+	@Query(nativeQuery = true, value = "SELECT * FROM Usuario")
+	Page<Usuario> findAllUser(PageRequest pageRequest);
+
+	
+
 
 	
 
